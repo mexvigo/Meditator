@@ -138,6 +138,32 @@ body {
 .dur-btn:hover { background: rgba(167,139,250,.12); border-color: var(--accent-alt); }
 .dur-btn.selected { background: rgba(167,139,250,.18); border-color: var(--accent-alt); box-shadow: 0 0 12px rgba(167,139,250,.2); }
 
+/* Sound picker */
+.sound-picker {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.snd-btn {
+  flex: 1;
+  min-width: 70px;
+  background: rgba(255,255,255,.04);
+  border: 1.5px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  color: var(--text);
+  padding: .55rem .3rem;
+  cursor: pointer;
+  font-size: .76rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .2rem;
+  transition: all .25s ease;
+}
+.snd-btn:hover { background: rgba(249,168,212,.12); border-color: #f9a8d4; }
+.snd-btn.selected { background: rgba(249,168,212,.18); border-color: #f9a8d4; box-shadow: 0 0 12px rgba(249,168,212,.2); }
+
 /* Voice toggle */
 .voice-toggle {
   display: flex;

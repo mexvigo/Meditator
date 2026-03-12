@@ -146,6 +146,7 @@ let guideTimer       = null;
 let remainingSeconds = 0;
 let voiceEnabled     = false;
 let chosenVoice      = null;
+let selectedSound    = 'none';
 
 /* ── Speech Synthesis ────────────────────────────── */
 const synth = window.speechSynthesis;
@@ -210,6 +211,212 @@ function speak(text) {
 function stopSpeaking() {
   if (synth) synth.cancel();
 }
+
+/* ── Ambient Soundscapes (Web Audio API) ─────────── */
+let audioCtx     = null;
+let ambientNodes = [];
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function createNoiseBuffer(ctx, seconds) {
+  const sr  = ctx.sampleRate;
+  const len = sr * seconds;
+  const buf = ctx.createBuffer(1, len, sr);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+  return buf;
+}
+
+// Fade-in master gain
+function makeMaster(ctx, volume) {
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0, ctx.currentTime);
+  gain.gain.linearRampToValueAtTime(volume, ctx.currentTime + 3);
+  gain.connect(ctx.destination);
+  return gain;
+}
+
+function startRain() {
+  const ctx = getAudioCtx();
+  const master = makeMaster(ctx, 0.35);
+
+  // Steady rain base — bandpass-filtered noise
+  const noiseSrc = ctx.createBufferSource();
+  noiseSrc.buffer = createNoiseBuffer(ctx, 4);
+  noiseSrc.loop = true;
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 8000;
+  bp.Q.value = 0.4;
+  noiseSrc.connect(bp);
+  bp.connect(master);
+  noiseSrc.start();
+
+  // Softer low-end layer for body
+  const lowSrc = ctx.createBufferSource();
+  lowSrc.buffer = createNoiseBuffer(ctx, 4);
+  lowSrc.loop = true;
+  const lp = ctx.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.value = 400;
+  const lowGain = ctx.createGain();
+  lowGain.gain.value = 0.6;
+  lowSrc.connect(lp);
+  lp.connect(lowGain);
+  lowGain.connect(master);
+  lowSrc.start();
+
+  ambientNodes.push(noiseSrc, lowSrc, bp, lp, lowGain, master);
+}
+
+function startOcean() {
+  const ctx = getAudioCtx();
+  const master = makeMaster(ctx, 0.3);
+
+  const noiseSrc = ctx.createBufferSource();
+  noiseSrc.buffer = createNoiseBuffer(ctx, 6);
+  noiseSrc.loop = true;
+
+  const lp = ctx.createBiquadFilter();
+  lp.type = 'lowpass';
+  lp.frequency.value = 600;
+
+  // Slow volume modulation (wave-like)
+  const waveGain = ctx.createGain();
+  waveGain.gain.value = 0.5;
+  const lfo = ctx.createOscillator();
+  lfo.type = 'sine';
+  lfo.frequency.value = 0.1; // one wave every ~10s
+  const lfoGain = ctx.createGain();
+  lfoGain.gain.value = 0.4;
+  lfo.connect(lfoGain);
+  lfoGain.connect(waveGain.gain);
+  lfo.start();
+
+  noiseSrc.connect(lp);
+  lp.connect(waveGain);
+  waveGain.connect(master);
+  noiseSrc.start();
+
+  // Higher-frequency surf hiss
+  const hissSrc = ctx.createBufferSource();
+  hissSrc.buffer = createNoiseBuffer(ctx, 4);
+  hissSrc.loop = true;
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass';
+  hp.frequency.value = 3000;
+  const hissGain = ctx.createGain();
+  hissGain.gain.value = 0.08;
+  const lfo2 = ctx.createOscillator();
+  lfo2.type = 'sine';
+  lfo2.frequency.value = 0.1;
+  const lfo2Gain = ctx.createGain();
+  lfo2Gain.gain.value = 0.07;
+  lfo2.connect(lfo2Gain);
+  lfo2Gain.connect(hissGain.gain);
+  lfo2.start();
+  hissSrc.connect(hp);
+  hp.connect(hissGain);
+  hissGain.connect(master);
+  hissSrc.start();
+
+  ambientNodes.push(noiseSrc, hissSrc, lp, hp, waveGain, hissGain, lfo, lfo2, lfoGain, lfo2Gain, master);
+}
+
+function startWind() {
+  const ctx = getAudioCtx();
+  const master = makeMaster(ctx, 0.28);
+
+  const noiseSrc = ctx.createBufferSource();
+  noiseSrc.buffer = createNoiseBuffer(ctx, 5);
+  noiseSrc.loop = true;
+
+  const bp = ctx.createBiquadFilter();
+  bp.type = 'bandpass';
+  bp.frequency.value = 800;
+  bp.Q.value = 1.2;
+
+  // Slowly sweep the bandpass frequency
+  const lfo = ctx.createOscillator();
+  lfo.type = 'sine';
+  lfo.frequency.value = 0.06;
+  const lfoGain = ctx.createGain();
+  lfoGain.gain.value = 500;
+  lfo.connect(lfoGain);
+  lfoGain.connect(bp.frequency);
+  lfo.start();
+
+  noiseSrc.connect(bp);
+  bp.connect(master);
+  noiseSrc.start();
+
+  ambientNodes.push(noiseSrc, bp, lfo, lfoGain, master);
+}
+
+function startBowl() {
+  const ctx = getAudioCtx();
+  const master = makeMaster(ctx, 0.18);
+
+  // Layered detuned sine waves for a shimmering bowl tone
+  const freqs = [261.6, 392, 523.2, 659.3]; // C4, G4, C5, E5
+  freqs.forEach((freq) => {
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+
+    // Gentle vibrato
+    const vib = ctx.createOscillator();
+    vib.type = 'sine';
+    vib.frequency.value = 0.3 + Math.random() * 0.4;
+    const vibGain = ctx.createGain();
+    vibGain.gain.value = 1.5;
+    vib.connect(vibGain);
+    vibGain.connect(osc.frequency);
+    vib.start();
+
+    const g = ctx.createGain();
+    g.gain.value = 0.25;
+    osc.connect(g);
+    g.connect(master);
+    osc.start();
+
+    ambientNodes.push(osc, vib, vibGain, g);
+  });
+
+  ambientNodes.push(master);
+}
+
+function startAmbient(sound) {
+  stopAmbient();
+  if (sound === 'none') return;
+  if (sound === 'rain')  startRain();
+  if (sound === 'ocean') startOcean();
+  if (sound === 'wind')  startWind();
+  if (sound === 'bowl')  startBowl();
+}
+
+function stopAmbient() {
+  ambientNodes.forEach((node) => {
+    try {
+      if (node.stop) node.stop();
+      else if (node.disconnect) node.disconnect();
+    } catch (_) { /* already stopped */ }
+  });
+  ambientNodes = [];
+}
+
+// Sound picker buttons
+const sndBtns = $$('.snd-btn');
+sndBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    sndBtns.forEach((b) => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedSound = btn.dataset.sound;
+  });
+});
 
 /* ── Helpers ─────────────────────────────────────── */
 function showScreen(screen) {
@@ -318,6 +525,7 @@ function startSession() {
 
   startBreathing();
   startGuide(selectedMood, remainingSeconds);
+  startAmbient(selectedSound);
   showScreen(screenSession);
 }
 
@@ -326,6 +534,7 @@ function endSession(completed) {
   clearInterval(guideTimer);
   stopBreathing();
   stopSpeaking();
+  stopAmbient();
 
   const data = MEDITATIONS[selectedMood];
   const msg = completed
