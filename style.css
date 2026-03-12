@@ -421,61 +421,77 @@ body {
 
 /* ── Responsive ──────────────────────────────────── */
 @media (max-width: 600px) {
-  body {
+  html {
     overflow-y: auto;
-    align-items: flex-start;
+    height: auto;
+  }
+
+  body {
+    overflow: visible;
+    min-height: 0;
+    height: auto;
+    display: block;
   }
 
   .screen {
     position: relative;
-    justify-content: flex-start;
-    padding: 1.2rem 1rem;
-    min-height: 100vh;
+    inset: auto;
     display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 1.5rem 1rem 2rem;
+    min-height: 0;
+    height: auto;
+    opacity: 1;
+    pointer-events: auto;
   }
   .screen.active {
     display: flex;
   }
 
   .logo { font-size: 1.8rem; margin-bottom: .1rem; }
-  .subtitle { font-size: .92rem; margin-bottom: 1rem; }
+  .subtitle { font-size: .9rem; margin-bottom: .8rem; }
 
   .card {
-    padding: 1.2rem;
-    gap: .9rem;
+    padding: 1.1rem;
+    gap: .75rem;
+    max-width: 100%;
   }
 
-  .mood-grid { grid-template-columns: repeat(4, 1fr); gap: .45rem; }
-  .mood-btn { padding: .45rem .2rem; font-size: .72rem; }
-  .mood-icon { font-size: 1.2rem; }
+  .card label { font-size: .82rem; }
 
-  .duration-picker { gap: .4rem; }
-  .dur-btn { padding: .5rem .3rem; font-size: .8rem; }
+  .mood-grid { grid-template-columns: repeat(4, 1fr); gap: .4rem; }
+  .mood-btn { padding: .35rem .15rem; font-size: .68rem; }
+  .mood-icon { font-size: 1.1rem; }
 
-  .sound-picker { gap: .4rem; }
-  .snd-btn { min-width: 60px; padding: .4rem .2rem; font-size: .7rem; }
+  .duration-picker { gap: .35rem; }
+  .dur-btn { padding: .45rem .2rem; font-size: .78rem; }
 
-  .voice-toggle { gap: .35rem; }
+  .sound-picker { gap: .35rem; }
+  .snd-btn { min-width: 55px; padding: .35rem .15rem; font-size: .66rem; gap: .1rem; }
 
-  .custom-dropdown .dropdown-toggle { font-size: .82rem; padding: .45rem .7rem; }
-  .dropdown-menu { max-height: 150px; }
+  .voice-toggle { gap: .3rem; }
+  .toggle-text { font-size: .82rem; }
+  .custom-dropdown .dropdown-toggle { font-size: .78rem; padding: .4rem .7rem; }
+  .dropdown-menu { max-height: 140px; }
 
-  .cta { margin-top: .3rem; padding: .7rem 1.6rem; font-size: .92rem; }
+  .cta { margin-top: .2rem; padding: .65rem 1.4rem; font-size: .88rem; }
 
   /* Session screen */
-  .session-wrap { gap: 1.2rem; }
-  .breath-ring { width: 160px; height: 160px; }
-  .breath-circle { width: 90px; height: 90px; }
-  .guide-text { font-size: .95rem; max-width: 300px; }
-  .timer { font-size: 1.8rem; }
+  .session-wrap { gap: 1.2rem; padding-top: 1rem; }
+  .breath-ring { width: 150px; height: 150px; }
+  .breath-circle { width: 85px; height: 85px; }
+  .guide-text { font-size: .92rem; max-width: 280px; }
+  .timer { font-size: 1.6rem; }
 
   /* Done screen */
+  .done-wrap { padding-top: 2rem; }
   .done-icon { font-size: 2.2rem; }
   .done-wrap h2 { font-size: 1.5rem; }
 }
 
 @media (max-width: 370px) {
   .mood-grid { grid-template-columns: repeat(2, 1fr); }
-  .card { padding: 1rem; }
-  .snd-btn { min-width: 55px; font-size: .66rem; }
+  .card { padding: .9rem; }
 }
