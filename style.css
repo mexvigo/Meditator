@@ -228,25 +228,34 @@ body {
 }
 
 .voice-select {
-  background: rgba(255,255,255,.04);
-  border: 1.5px solid rgba(255,255,255,.1);
+  background: #162236;
+  border: 1.5px solid rgba(125,211,192,.15);
   border-radius: 10px;
-  color: var(--text);
-  padding: .5rem .7rem;
+  color: #cbd5e1;
+  padding: .55rem .8rem;
   font-size: .82rem;
   font-family: var(--font);
-  appearance: none;
   cursor: pointer;
   transition: all .25s ease;
+  outline: none;
+}
+
+/* Style the dropdown options */
+.voice-select option {
+  background: #162236;
+  color: #cbd5e1;
+  padding: .4rem;
 }
 
 .voice-select:disabled {
-  opacity: .4;
+  opacity: .35;
   cursor: not-allowed;
 }
 
-.voice-select:not(:disabled):hover {
+.voice-select:not(:disabled):hover,
+.voice-select:not(:disabled):focus {
   border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(125,211,192,.12);
 }
 
 /* CTA Buttons */
