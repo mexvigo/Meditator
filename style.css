@@ -420,8 +420,62 @@ body {
 .done-msg { color: var(--text-dim); max-width: 340px; line-height: 1.6; margin-bottom: .5rem; }
 
 /* ── Responsive ──────────────────────────────────── */
-@media (max-width: 500px) {
+@media (max-width: 600px) {
+  body {
+    overflow-y: auto;
+    align-items: flex-start;
+  }
+
+  .screen {
+    position: relative;
+    justify-content: flex-start;
+    padding: 1.2rem 1rem;
+    min-height: 100vh;
+    display: none;
+  }
+  .screen.active {
+    display: flex;
+  }
+
+  .logo { font-size: 1.8rem; margin-bottom: .1rem; }
+  .subtitle { font-size: .92rem; margin-bottom: 1rem; }
+
+  .card {
+    padding: 1.2rem;
+    gap: .9rem;
+  }
+
+  .mood-grid { grid-template-columns: repeat(4, 1fr); gap: .45rem; }
+  .mood-btn { padding: .45rem .2rem; font-size: .72rem; }
+  .mood-icon { font-size: 1.2rem; }
+
+  .duration-picker { gap: .4rem; }
+  .dur-btn { padding: .5rem .3rem; font-size: .8rem; }
+
+  .sound-picker { gap: .4rem; }
+  .snd-btn { min-width: 60px; padding: .4rem .2rem; font-size: .7rem; }
+
+  .voice-toggle { gap: .35rem; }
+
+  .custom-dropdown .dropdown-toggle { font-size: .82rem; padding: .45rem .7rem; }
+  .dropdown-menu { max-height: 150px; }
+
+  .cta { margin-top: .3rem; padding: .7rem 1.6rem; font-size: .92rem; }
+
+  /* Session screen */
+  .session-wrap { gap: 1.2rem; }
+  .breath-ring { width: 160px; height: 160px; }
+  .breath-circle { width: 90px; height: 90px; }
+  .guide-text { font-size: .95rem; max-width: 300px; }
+  .timer { font-size: 1.8rem; }
+
+  /* Done screen */
+  .done-icon { font-size: 2.2rem; }
+  .done-wrap h2 { font-size: 1.5rem; }
+}
+
+@media (max-width: 370px) {
   .mood-grid { grid-template-columns: repeat(2, 1fr); }
-  .card { padding: 1.4rem; }
-  .logo { font-size: 2rem; }
+  .card { padding: 1rem; }
+  .snd-btn { min-width: 55px; font-size: .66rem; }
 }
