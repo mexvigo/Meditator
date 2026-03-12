@@ -40,6 +40,19 @@
         <button class="dur-btn" data-minutes="15">15 min</button>
       </div>
 
+      <div class="voice-toggle">
+        <label class="toggle-label">
+          <span class="toggle-text">Speak guidance aloud</span>
+          <span class="toggle-switch">
+            <input type="checkbox" id="voiceToggle" />
+            <span class="toggle-track"></span>
+          </span>
+        </label>
+        <select id="voiceSelect" class="voice-select" disabled>
+          <option value="">Loading voices…</option>
+        </select>
+      </div>
+
       <button id="btn-start" class="cta" disabled>Begin Meditation</button>
     </div>
   </section>

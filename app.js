@@ -134,6 +134,9 @@ const guideText     = $("#guideText");
 const timerEl       = $("#timer");
 const doneMsg       = $("#doneMsg");
 
+const voiceToggle   = $("#voiceToggle");
+const voiceSelect   = $("#voiceSelect");
+
 /* ── State ───────────────────────────────────────── */
 let selectedMood     = null;
 let selectedMinutes  = null;
@@ -141,6 +144,72 @@ let sessionTimer     = null;
 let breathTimer      = null;
 let guideTimer       = null;
 let remainingSeconds = 0;
+let voiceEnabled     = false;
+let chosenVoice      = null;
+
+/* ── Speech Synthesis ────────────────────────────── */
+const synth = window.speechSynthesis;
+
+function populateVoices() {
+  const voices = synth.getVoices();
+  if (!voices.length) return;
+
+  voiceSelect.innerHTML = '';
+
+  // Prefer calm / female / natural-sounding voices
+  const preferred = ['aria', 'jenny', 'zira', 'samantha', 'karen', 'fiona', 'google uk english female'];
+
+  const sorted = [...voices]
+    .filter((v) => v.lang.startsWith('en'))
+    .sort((a, b) => {
+      const aScore = preferred.some((p) => a.name.toLowerCase().includes(p)) ? 0 : 1;
+      const bScore = preferred.some((p) => b.name.toLowerCase().includes(p)) ? 0 : 1;
+      return aScore - bScore;
+    });
+
+  sorted.forEach((voice, i) => {
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = voice.name;
+    opt.dataset.voiceName = voice.name;
+    voiceSelect.appendChild(opt);
+  });
+
+  // Store sorted list for later lookup
+  voiceSelect._sortedVoices = sorted;
+  if (sorted.length) chosenVoice = sorted[0];
+}
+
+// Voices load async in some browsers
+synth.addEventListener('voiceschanged', populateVoices);
+populateVoices();
+
+voiceToggle.addEventListener('change', () => {
+  voiceEnabled = voiceToggle.checked;
+  voiceSelect.disabled = !voiceEnabled;
+});
+
+voiceSelect.addEventListener('change', () => {
+  const idx = parseInt(voiceSelect.value, 10);
+  if (voiceSelect._sortedVoices && voiceSelect._sortedVoices[idx]) {
+    chosenVoice = voiceSelect._sortedVoices[idx];
+  }
+});
+
+function speak(text) {
+  if (!voiceEnabled || !synth) return;
+  synth.cancel(); // stop any in-progress speech
+  const utter = new SpeechSynthesisUtterance(text);
+  if (chosenVoice) utter.voice = chosenVoice;
+  utter.rate  = 0.85;  // slow and calm
+  utter.pitch = 0.9;   // slightly lower
+  utter.volume = 1;
+  synth.speak(utter);
+}
+
+function stopSpeaking() {
+  if (synth) synth.cancel();
+}
 
 /* ── Helpers ─────────────────────────────────────── */
 function showScreen(screen) {
@@ -214,6 +283,7 @@ function startGuide(mood, totalSeconds) {
   setTimeout(() => {
     guideText.textContent = data.intro;
     guideText.style.opacity = 1;
+    speak(data.intro);
   }, 300);
 
   let index = 0;
@@ -223,6 +293,7 @@ function startGuide(mood, totalSeconds) {
       setTimeout(() => {
         guideText.textContent = steps[index];
         guideText.style.opacity = 1;
+        speak(steps[index]);
         index++;
       }, 500);
     } else {
@@ -254,11 +325,14 @@ function endSession(completed) {
   clearInterval(sessionTimer);
   clearInterval(guideTimer);
   stopBreathing();
+  stopSpeaking();
 
   const data = MEDITATIONS[selectedMood];
-  doneMsg.textContent = completed
+  const msg = completed
     ? data.closing
     : "Even a short pause makes a difference. Be proud of showing up.";
+  doneMsg.textContent = msg;
+  speak(msg);
 
   showScreen(screenDone);
 }
