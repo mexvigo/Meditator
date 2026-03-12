@@ -228,6 +228,22 @@ body {
 }
 
 .voice-select {
+  display: none;
+}
+
+/* Custom dropdown */
+.custom-dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.custom-dropdown.disabled {
+  opacity: .35;
+  pointer-events: none;
+}
+
+.dropdown-toggle {
+  width: 100%;
   background: #162236;
   border: 1.5px solid rgba(125,211,192,.15);
   border-radius: 10px;
@@ -236,26 +252,77 @@ body {
   font-size: .82rem;
   font-family: var(--font);
   cursor: pointer;
+  text-align: left;
   transition: all .25s ease;
   outline: none;
+  position: relative;
 }
 
-/* Style the dropdown options */
-.voice-select option {
-  background: #162236;
-  color: #cbd5e1;
-  padding: .4rem;
+.dropdown-toggle::after {
+  content: '▾';
+  position: absolute;
+  right: .8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-dim);
+  font-size: .9rem;
 }
 
-.voice-select:disabled {
-  opacity: .35;
-  cursor: not-allowed;
-}
-
-.voice-select:not(:disabled):hover,
-.voice-select:not(:disabled):focus {
+.dropdown-toggle:hover,
+.dropdown-toggle:focus {
   border-color: var(--accent);
   box-shadow: 0 0 12px rgba(125,211,192,.12);
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  background: #162236;
+  border: 1.5px solid rgba(125,211,192,.2);
+  border-radius: 10px;
+  padding: .3rem 0;
+  list-style: none;
+  z-index: 20;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.4);
+}
+
+.dropdown-menu.open {
+  display: block;
+}
+
+.dropdown-menu li {
+  padding: .45rem .8rem;
+  font-size: .8rem;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: background .2s, color .2s;
+}
+
+.dropdown-menu li:hover {
+  background: rgba(125,211,192,.1);
+  color: #e2e8f0;
+}
+
+.dropdown-menu li.active {
+  color: var(--accent);
+  background: rgba(125,211,192,.08);
+}
+
+/* Scrollbar styling for dropdown */
+.dropdown-menu::-webkit-scrollbar {
+  width: 5px;
+}
+.dropdown-menu::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: rgba(125,211,192,.2);
+  border-radius: 3px;
 }
 
 /* CTA Buttons */

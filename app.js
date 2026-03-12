@@ -136,6 +136,9 @@ const doneMsg       = $("#doneMsg");
 
 const voiceToggle   = $("#voiceToggle");
 const voiceSelect   = $("#voiceSelect");
+const voiceDropdown = $("#voiceDropdown");
+const dropdownToggle = $("#dropdownToggle");
+const dropdownMenu   = $("#dropdownMenu");
 
 /* ── State ───────────────────────────────────────── */
 let selectedMood     = null;
@@ -155,8 +158,6 @@ function populateVoices() {
   const voices = synth.getVoices();
   if (!voices.length) return;
 
-  voiceSelect.innerHTML = '';
-
   // Prefer calm / female / natural-sounding voices
   const preferred = ['aria', 'jenny', 'zira', 'samantha', 'karen', 'fiona', 'google uk english female'];
 
@@ -168,17 +169,27 @@ function populateVoices() {
       return aScore - bScore;
     });
 
+  // Populate custom dropdown
+  dropdownMenu.innerHTML = '';
   sorted.forEach((voice, i) => {
-    const opt = document.createElement('option');
-    opt.value = i;
-    opt.textContent = voice.name;
-    opt.dataset.voiceName = voice.name;
-    voiceSelect.appendChild(opt);
+    const li = document.createElement('li');
+    li.textContent = voice.name;
+    li.dataset.index = i;
+    if (i === 0) li.classList.add('active');
+    li.addEventListener('click', () => {
+      dropdownMenu.querySelectorAll('li').forEach((el) => el.classList.remove('active'));
+      li.classList.add('active');
+      chosenVoice = sorted[i];
+      dropdownToggle.textContent = voice.name;
+      dropdownMenu.classList.remove('open');
+    });
+    dropdownMenu.appendChild(li);
   });
 
-  // Store sorted list for later lookup
-  voiceSelect._sortedVoices = sorted;
-  if (sorted.length) chosenVoice = sorted[0];
+  if (sorted.length) {
+    chosenVoice = sorted[0];
+    dropdownToggle.textContent = sorted[0].name;
+  }
 }
 
 // Voices load async in some browsers
@@ -187,13 +198,17 @@ populateVoices();
 
 voiceToggle.addEventListener('change', () => {
   voiceEnabled = voiceToggle.checked;
-  voiceSelect.disabled = !voiceEnabled;
+  voiceDropdown.classList.toggle('disabled', !voiceEnabled);
 });
 
-voiceSelect.addEventListener('change', () => {
-  const idx = parseInt(voiceSelect.value, 10);
-  if (voiceSelect._sortedVoices && voiceSelect._sortedVoices[idx]) {
-    chosenVoice = voiceSelect._sortedVoices[idx];
+dropdownToggle.addEventListener('click', () => {
+  dropdownMenu.classList.toggle('open');
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+  if (!voiceDropdown.contains(e.target)) {
+    dropdownMenu.classList.remove('open');
   }
 });
 
