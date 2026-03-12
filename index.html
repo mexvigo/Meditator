@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meditator — Guided Meditation</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Ambient floating circles -->
+  <div class="ambient">
+    <span class="orb orb1"></span>
+    <span class="orb orb2"></span>
+    <span class="orb orb3"></span>
+  </div>
+
+  <!-- ───── Screen 1: Welcome / Input ───── -->
+  <section id="screen-input" class="screen active">
+    <h1 class="logo">Meditator</h1>
+    <p class="subtitle">Take a breath. Let's begin.</p>
+
+    <div class="card">
+      <label for="mood">How are you feeling right now?</label>
+      <div class="mood-grid" id="mood">
+        <button class="mood-btn" data-mood="anxious"><span class="mood-icon">😰</span>Anxious</button>
+        <button class="mood-btn" data-mood="stressed"><span class="mood-icon">😓</span>Stressed</button>
+        <button class="mood-btn" data-mood="sad"><span class="mood-icon">😔</span>Sad</button>
+        <button class="mood-btn" data-mood="restless"><span class="mood-icon">🌀</span>Restless</button>
+        <button class="mood-btn" data-mood="tired"><span class="mood-icon">😴</span>Tired</button>
+        <button class="mood-btn" data-mood="neutral"><span class="mood-icon">😌</span>Neutral</button>
+        <button class="mood-btn" data-mood="happy"><span class="mood-icon">😊</span>Happy</button>
+        <button class="mood-btn" data-mood="grateful"><span class="mood-icon">🙏</span>Grateful</button>
+      </div>
+
+      <label for="duration">How long would you like to meditate?</label>
+      <div class="duration-picker">
+        <button class="dur-btn" data-minutes="3">3 min</button>
+        <button class="dur-btn" data-minutes="5">5 min</button>
+        <button class="dur-btn" data-minutes="10">10 min</button>
+        <button class="dur-btn" data-minutes="15">15 min</button>
+      </div>
+
+      <button id="btn-start" class="cta" disabled>Begin Meditation</button>
+    </div>
+  </section>
+
+  <!-- ───── Screen 2: Meditation Session ───── -->
+  <section id="screen-session" class="screen">
+    <div class="session-wrap">
+      <div class="breath-ring">
+        <div class="breath-circle" id="breathCircle"></div>
+        <span class="breath-label" id="breathLabel">Breathe in</span>
+      </div>
+
+      <p class="guide-text" id="guideText"></p>
+
+      <div class="timer" id="timer">5:00</div>
+
+      <button id="btn-end" class="cta cta-secondary">End Session</button>
+    </div>
+  </section>
+
+  <!-- ───── Screen 3: Completion ───── -->
+  <section id="screen-done" class="screen">
+    <div class="done-wrap">
+      <div class="done-icon">✨</div>
+      <h2>Well done</h2>
+      <p class="done-msg" id="doneMsg">You gave yourself the gift of stillness.</p>
+      <button id="btn-restart" class="cta">Meditate Again</button>
+    </div>
+  </section>
+
+  <script src="app.js"></script>
+</body>
+</html>

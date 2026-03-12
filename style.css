@@ -1,0 +1,240 @@
+/* ── Reset & Base ─────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:        #0f1b2d;
+  --bg-card:   rgba(255, 255, 255, 0.06);
+  --text:      #e2e8f0;
+  --text-dim:  #94a3b8;
+  --accent:    #7dd3c0;
+  --accent-alt:#a78bfa;
+  --radius:    16px;
+  --font:      'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Ambient Orbs ────────────────────────────────── */
+.ambient { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: .35;
+}
+.orb1 { width: 420px; height: 420px; background: #7dd3c0; top: -10%; left: -8%;  animation: drift1 18s ease-in-out infinite alternate; }
+.orb2 { width: 350px; height: 350px; background: #a78bfa; bottom: -12%; right: -6%; animation: drift2 22s ease-in-out infinite alternate; }
+.orb3 { width: 280px; height: 280px; background: #f9a8d4; top: 40%; left: 55%;   animation: drift3 20s ease-in-out infinite alternate; }
+
+@keyframes drift1 { to { transform: translate(60px, 40px) scale(1.15); } }
+@keyframes drift2 { to { transform: translate(-50px, -30px) scale(1.1); } }
+@keyframes drift3 { to { transform: translate(-40px, 50px) scale(1.2); } }
+
+/* ── Screens ─────────────────────────────────────── */
+.screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  z-index: 1;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .8s ease;
+}
+.screen.active { opacity: 1; pointer-events: auto; }
+
+/* ── Welcome / Input Screen ──────────────────────── */
+.logo {
+  font-size: 2.6rem;
+  font-weight: 300;
+  letter-spacing: .12em;
+  color: var(--accent);
+  margin-bottom: .3rem;
+}
+.subtitle {
+  color: var(--text-dim);
+  font-size: 1.05rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius);
+  padding: 2rem 2.2rem;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.card label {
+  font-size: .92rem;
+  color: var(--text-dim);
+  letter-spacing: .03em;
+}
+
+/* Mood grid */
+.mood-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: .6rem;
+}
+
+.mood-btn {
+  background: rgba(255,255,255,.04);
+  border: 1.5px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  color: var(--text);
+  padding: .65rem .3rem;
+  cursor: pointer;
+  font-size: .78rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .3rem;
+  transition: all .25s ease;
+}
+.mood-btn:hover { background: rgba(125,211,192,.12); border-color: var(--accent); }
+.mood-btn.selected { background: rgba(125,211,192,.18); border-color: var(--accent); box-shadow: 0 0 12px rgba(125,211,192,.2); }
+
+.mood-icon { font-size: 1.5rem; }
+
+/* Duration picker */
+.duration-picker {
+  display: flex;
+  gap: .6rem;
+}
+.dur-btn {
+  flex: 1;
+  background: rgba(255,255,255,.04);
+  border: 1.5px solid rgba(255,255,255,.1);
+  border-radius: 12px;
+  color: var(--text);
+  padding: .6rem;
+  cursor: pointer;
+  font-size: .88rem;
+  transition: all .25s ease;
+}
+.dur-btn:hover { background: rgba(167,139,250,.12); border-color: var(--accent-alt); }
+.dur-btn.selected { background: rgba(167,139,250,.18); border-color: var(--accent-alt); box-shadow: 0 0 12px rgba(167,139,250,.2); }
+
+/* CTA Buttons */
+.cta {
+  margin-top: .6rem;
+  padding: .85rem 2rem;
+  border: none;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: .04em;
+  transition: all .3s ease;
+  background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+  color: #0f1b2d;
+}
+.cta:disabled { opacity: .35; cursor: not-allowed; }
+.cta:not(:disabled):hover { transform: scale(1.04); box-shadow: 0 4px 24px rgba(125,211,192,.3); }
+
+.cta-secondary {
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,.15);
+  color: var(--text-dim);
+  font-weight: 400;
+  font-size: .88rem;
+  padding: .6rem 1.6rem;
+}
+.cta-secondary:hover { border-color: var(--text-dim); color: var(--text); }
+
+/* ── Session Screen ──────────────────────────────── */
+.session-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Breathing ring */
+.breath-ring {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.breath-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(125,211,192,.45), rgba(167,139,250,.25));
+  box-shadow: 0 0 60px rgba(125,211,192,.2);
+  transition: transform 4s ease-in-out, box-shadow 4s ease-in-out;
+}
+.breath-circle.inhale  { transform: scale(1.6); box-shadow: 0 0 80px rgba(125,211,192,.35); }
+.breath-circle.exhale  { transform: scale(1);   box-shadow: 0 0 40px rgba(125,211,192,.15); }
+
+.breath-label {
+  position: absolute;
+  bottom: -8px;
+  font-size: .85rem;
+  color: var(--text-dim);
+  letter-spacing: .06em;
+  transition: opacity .5s;
+}
+
+.guide-text {
+  max-width: 380px;
+  text-align: center;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text);
+  min-height: 3.4em;
+  transition: opacity .6s ease;
+}
+
+.timer {
+  font-size: 2.4rem;
+  font-weight: 200;
+  letter-spacing: .08em;
+  color: var(--text-dim);
+}
+
+/* ── Done Screen ─────────────────────────────────── */
+.done-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+.done-icon { font-size: 3rem; }
+.done-wrap h2 { font-weight: 300; font-size: 2rem; color: var(--accent); }
+.done-msg { color: var(--text-dim); max-width: 340px; line-height: 1.6; margin-bottom: .5rem; }
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 500px) {
+  .mood-grid { grid-template-columns: repeat(2, 1fr); }
+  .card { padding: 1.4rem; }
+  .logo { font-size: 2rem; }
+}
